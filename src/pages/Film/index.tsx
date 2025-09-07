@@ -5,7 +5,7 @@ import { api } from "../../services/api";
 
 import './styles.css';
 
-interface FilmProps {
+interface IFilm {
   id: number,
   title: string,
   backdrop_path: string,
@@ -17,31 +17,16 @@ export function Film() {
   const { id } = useParams();
   const navgate = useNavigate();
 
-  const [film, setFilm] = useState<FilmProps>({
-    id: 0,
-    title: '',
-    backdrop_path: '',
-    overview: '',
-    vote_average: 0
-  });
-  
+  const [film, setFilm] = useState<IFilm | null>(null);
+
   const [isLoadingFilm, setIsLoadingFilms] = useState(true);
 
   async function loadFilm() {
-    await api.get(`/movie/${id}`, {
-      params: {
-        api_key: import.meta.env.VITE_MOVIEDB_KEY,
-        language: "pt-BR"
-      }
-    })
-    .then((response) => {
-      setFilm(response.data);
-      setIsLoadingFilms(false);
-    })
-    .catch(() => {
-      navgate("/", { replace: true });
-      return;
-    })
+    await api.get(`/movie/${id}`)
+      .then((response) => {
+        setFilm(response.data);
+        setIsLoadingFilms(false);
+      });
   }
 
   useEffect(() => {
@@ -53,9 +38,9 @@ export function Film() {
 
     let savedFilms = JSON.parse(filmList) || [];
 
-    const hasFilm = savedFilms.some((savedFilm: { id: number })=> savedFilm.id === film.id);
+    const hasFilm = savedFilms.some((savedFilm: { id: number }) => savedFilm.id === film!.id);
 
-    if(hasFilm) {
+    if (hasFilm) {
       toast.warning("Esse filme já está salvo!");
       return;
     }
@@ -65,12 +50,20 @@ export function Film() {
     toast.success("Filme salvo com sucesso!");
   }
 
-  if(isLoadingFilm) {
+  if (isLoadingFilm) {
     return (
       <div className="film-info">
         <h1>Carregando filme...</h1>
       </div>
     )
+  }
+
+  if (!film) {
+    return (
+      <div className="film-info">
+        <h1>Filme não encontrado...</h1>
+      </div>
+    );
   }
 
   return (

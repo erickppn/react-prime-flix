@@ -8,7 +8,8 @@ interface FilmsProps {
   id: number,
   title: string,
   overview: string,
-  poster_path: string
+  poster_path: string,
+  backdrop_path: string,
 }
 
 export function Home() {
@@ -18,8 +19,6 @@ export function Home() {
   async function loadFilms() {
     const res = await api.get("movie/now_playing", {
       params: {
-        api_key: import.meta.env.VITE_MOVIEDB_KEY,
-        language: "pt-BR",
         page: 1,
       }
     });
