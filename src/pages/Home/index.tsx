@@ -3,17 +3,19 @@ import { Link } from "react-router-dom";
 import { api } from "../../services/api";
 
 import './styles.css';
+import { Banner } from "../../components/Banner";
 
-interface FilmsProps {
+interface FilmProps {
   id: number,
   title: string,
   overview: string,
   poster_path: string,
   backdrop_path: string,
+  release_date: string,
 }
 
 export function Home() {
-  const [films, setFilms] = useState<FilmsProps[]>([]);
+  const [films, setFilms] = useState<FilmProps[]>([]);
   const [isLoadingFilms, setIsLoadingFilms] = useState(true);
 
   async function loadFilms() {
@@ -32,15 +34,12 @@ export function Home() {
     loadFilms();
   }, []);
 
-  if(isLoadingFilms) {
-    return (
-      <h1>Carregando filmes...</h1>
-    )
-  }
 
   return (
-    <div className="container">
-      <div className="film-list">
+    <main className="h-full overflow-y-scroll">
+      <Banner />
+
+      <div className="film-list text-white">
         {
           films.map((film) => {
             return (
@@ -53,6 +52,6 @@ export function Home() {
           })
         }
       </div>
-    </div>
+    </main>
   )
 }
