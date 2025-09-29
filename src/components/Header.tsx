@@ -1,9 +1,28 @@
 import { Heart, MagnifyingGlass } from "phosphor-react";
+import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 
-export function Header() {
+export function Header({ heightToCompare, elementReference }: { heightToCompare?: number, elementReference?: React.RefObject<HTMLElement> }) {
+  const [isScrolled, setScrolled] = useState(false);
+  
+  function handleScroll() {
+    if (!elementReference) return;
+
+    if (!elementReference.current || !heightToCompare) {
+      return setScrolled(true);
+    }
+    
+    if (elementReference?.current.scrollTop > heightToCompare) {
+      setScrolled(true);
+    } else {
+      setScrolled(false);
+    }
+  }
+
+  elementReference?.current && elementReference?.current.addEventListener('scroll', handleScroll);
+
   return (
-    <header className="fixed w-full flex justify-between text-white py-8 px-40 z-100">
+    <header className={`fixed w-full flex justify-between text-white px-40 z-100 transition-all duration-600 ${isScrolled || !heightToCompare ? 'bg-black py-3' : 'bg-transparent py-8'}`}>
       <Link className="font-bold text-4xl text-nowrap" to='/'>
         Prime <span className="text-rose-500">Flix</span>
       </Link>

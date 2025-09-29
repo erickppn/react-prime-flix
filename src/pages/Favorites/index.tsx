@@ -1,41 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import './styles.css';
 
-interface FilmsProps {
-  id: number,
-  title: string,
-}
+import { FilmsContext } from '../../contexts/FilmsContext';
 
 export function Favorites() {
-  const [films, setFilms] = useState<FilmsProps[]>([]);
-
-  useEffect(() => {
-    const savedFilms = localStorage.getItem("@prime-flix") || '[]';
-    setFilms(JSON.parse(savedFilms));
-  }, []);
-
-  function deleteFilm(id: number) {
-    let filteredFilms = films.filter((item) => {
-      return (item.id !== id);
-    })
-    
-    setFilms(filteredFilms);
-    localStorage.setItem("@prime-flix", JSON.stringify(filteredFilms));
-
-    toast.success("Filme removido com sucesso");
-  }
+  const { savedFilms, deleteFilm } = useContext(FilmsContext);
 
   return (
-    <div className="my-films">
-      <h1>Meus Filmes</h1>
+    <div className="my-films text-white">
+      <h1 className='mt-32'>Meus Filmes</h1>
 
-      {films.length === 0 && <span>Você não possui nenhum filme salvo :(</span>}
+      {savedFilms.length === 0 && <span>Você não possui nenhum filme salvo :(</span>}
 
       <ul>
         {
-          films.map((film) => {
+          savedFilms.map((film) => {
             return (
               <li key={film.id}>
                 <span>{film.title}</span>
